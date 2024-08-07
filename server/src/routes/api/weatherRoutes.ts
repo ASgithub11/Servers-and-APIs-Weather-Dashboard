@@ -46,6 +46,23 @@ router.get('/history', async (req: Request, res: Response) => {
 });
 
 // * BONUS TODO: DELETE city from search history
-router.delete('/history/:id', async (req: Request, res: Response) => {});
+router.delete('/history/:id', async (req: Request, res: Response) => {
+  const cityId = req.params.id;
+
+  if (!cityId) {
+    return res.status(400).json({ message: 'City ID is required' });
+  }
+  try {
+    const deletedCity = await historyService.deleteCity(cityId);
+    if (deletedCity) {
+      return res.status(200).json({message: 'City deleted from search history'});
+    } else {
+      return res.status(404).json({message: 'City ${cityId} not found in search history'});
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({message: 'Unable to delete city from search history'});
+  }
+});
 
 export default router;
